@@ -1,0 +1,4 @@
+#jobtype, submittime, numOfjobs, numOfreducers, inputsize
+WebScan	0	2	5	small
+WebScan	300	10	20	small
+WebScan 600	1	5	small
