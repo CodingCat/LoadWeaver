@@ -52,7 +52,8 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 	 * @return the JobConf object which describe the job
 	 * @throws IOException
 	 */
-	public JobConf createWebdataScan(String indir, String outdir, int numOfReducers) throws IOException {
+	public LoadJob createWebdataScan(String indir, String outdir, int numOfReducers, int timestamp)
+			throws IOException {
 		String [] argv = setupWebdataScan(indir, outdir, numOfReducers);
 		JobConf job = new JobConf();
 		job.setJobName("WebdataScan." + "small");
@@ -107,6 +108,6 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 	        writer.close();
 	      }
 	    }
-		return job;
+		return new LoadJob(job, timestamp);
 	}
 }

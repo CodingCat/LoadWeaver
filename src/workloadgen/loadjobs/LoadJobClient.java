@@ -81,12 +81,11 @@ public class LoadJobClient {
 			}
 			// create a job according to subpoint
 			try{
-				loadcontroller.addJob(new LoadJob(loadcreator.createWebdataScan(
+				loadcontroller.addJob(loadcreator.createWebdataScan(
 						WEBJOB_INPUT + SMALL_INPUT_PATH,
 						"out/webdatascan-small-out",
-						subpoint.getNumReduce()),
+						subpoint.getNumReduce(),
 						subpoint.getTimestamp()));
-
 				lasttimestamp = subpoint.getTimestamp();
 			}
 			catch (IOException e){
