@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration SYSTEM "WorkloadGen-Conf.dtd" >
+<configuration> 
+  <property>
+    <name>CosmosSIM.simulator.confPath</name>
+    <value>../c4.ini</value>
+  </property>
+</configuration>

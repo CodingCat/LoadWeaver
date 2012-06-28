@@ -8,17 +8,17 @@ public class WorkloadRunner {
 	private LoadJobClient client = null;
 	static WorkloadRunner _instance = null;
 	
-	public WorkloadRunner(){	
-	
+	public WorkloadRunner(String conf, String trace){	
+		client = new LoadJobClient(conf, trace);
 	}
 	
 	public void mainService(){
 		client.start();
 	}
 	
-	static WorkloadRunner Instance(){
+	static WorkloadRunner Instance(String conf, String trace){
 		if (_instance == null){
-			_instance = new WorkloadRunner();
+			_instance = new WorkloadRunner(conf, trace);
 		}
 		return _instance;
 	}
@@ -27,8 +27,7 @@ public class WorkloadRunner {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		WorkloadRunner.Instance().mainService();
+		WorkloadRunner.Instance(args[0], args[1]).mainService();
 	}
 
 }

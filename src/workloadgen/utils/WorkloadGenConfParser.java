@@ -61,7 +61,7 @@ public class WorkloadGenConfParser {
 	 * @param confPath, the path of configuration file 
 	 * @return the newly constructed or existed instance
 	 */
-	static WorkloadGenConfParser Instance(String confPath){
+	public static WorkloadGenConfParser Instance(String confPath){
 		if (_instance == null){
 			_instance = new WorkloadGenConfParser(confPath);
 		}
