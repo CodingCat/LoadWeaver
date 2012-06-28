@@ -13,7 +13,7 @@ import workloadgen.utils.WorkloadGenConfParser;
 
 public class LoadJobClient {
 	
-	private LoadJobControl loadcontroller= null;
+	private LoadJobController loadcontroller= null;
 	private LoadTraceGenerator traceGenerator= null;
 	private LoadJobCreator loadcreator = null;
 	private Configuration config = null; //= initConfig();
@@ -28,7 +28,7 @@ public class LoadJobClient {
 	//private static String MEDIUM_INPUT_PATH = null;
 	//private static String LARGE_INPUT_PATH = null;
 	
-	public LoadJobClient(String conf, String trace, LoadJobControl controller){
+	public LoadJobClient(String conf, String trace, LoadJobController controller){
 		this.confPath = conf;
 		this.tracePath = trace;
 		this.loadcontroller = controller;
@@ -76,8 +76,7 @@ public class LoadJobClient {
 		LoadSubmissionPlan plan = traceGenerator.getSubmissionPlan();
 		for (LoadSubmissionPlan.LoadSubmissionPoint subpoint : plan.getList()) {
 			if (subpoint.getTimestamp() < lasttimestamp) {
-				System.out
-						.println("submit records must be sorted by time with asc order");
+				System.out.println("submit records must be sorted by time with asc order");
 				continue;
 			}
 			// create a job according to subpoint

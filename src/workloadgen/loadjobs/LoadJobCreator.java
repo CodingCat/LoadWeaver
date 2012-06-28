@@ -55,6 +55,7 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 	public JobConf createWebdataScan(String indir, String outdir, int numOfReducers) throws IOException {
 		String [] argv = setupWebdataScan(indir, outdir, numOfReducers);
 		JobConf job = new JobConf();
+		job.setJobName("WebdataScan." + "small");
 	    job.setJarByClass(GenericMRLoadGenerator.class);
 	    job.setMapperClass(SampleMapper.class);
 	    job.setReducerClass(SampleReducer.class);
