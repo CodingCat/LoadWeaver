@@ -5,16 +5,15 @@ import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.mapred.jobcontrol.Job;
 
 import workloadgen.loadgen.LoadSubmissionPlan;
 import workloadgen.loadgen.LoadTraceGenerator;
 import workloadgen.loadgen.trace.LoadTraceReplayer;
 import workloadgen.utils.WorkloadGenConfParser;
 
-public class LoadJobClient extends Thread{
+public class LoadJobClient {
 	
-	private LoadJobControl loadengine = null;
+	private LoadJobControl loadcontroller= null;
 	private LoadTraceGenerator traceGenerator= null;
 	private LoadJobCreator loadcreator = null;
 	private Configuration config = null; //= initConfig();
@@ -29,15 +28,15 @@ public class LoadJobClient extends Thread{
 	//private static String MEDIUM_INPUT_PATH = null;
 	//private static String LARGE_INPUT_PATH = null;
 	
-	public LoadJobClient(String conf, String trace){
+	public LoadJobClient(String conf, String trace, LoadJobControl controller){
 		this.confPath = conf;
 		this.tracePath = trace;
+		this.loadcontroller = controller;
 		init();
 	}
 	
 	private void init(){
 		traceGenerator = new LoadTraceReplayer(this.tracePath);
-		loadengine = new LoadJobControl("WorkloadGen");
 		loadcreator = new LoadJobCreator();
 		config = initConfig();
 		fs = initFs();
@@ -47,17 +46,6 @@ public class LoadJobClient extends Thread{
 				"workloadgen.input.smallpath", 
 				 "{part-00000,part-00001,part-00002}");
 		WEBJOB_INPUT = GRID_MIX_DATA + "/WebSimulationBlockCompressed";
-	}
-	
-	private void clearDir(String dir) {
-		try {
-			Path outfile = new Path(dir);
-			fs.delete(outfile, true);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			System.out.println("delete file error:");
-			System.out.println(ex.toString());
-		}
 	}
 	
 	private FileSystem initFs() {
@@ -82,46 +70,31 @@ public class LoadJobClient extends Thread{
 		return conf;
 	}
 
-	@Override
-	public void run(){
-		try {
-			int lasttimestamp = 0;
-			LoadSubmissionPlan plan = traceGenerator.getSubmissionPlan();
-		//	Thread LoadJobEngine = new Thread(loadengine);
-		//	LoadJobEngine.start();
-			for (LoadSubmissionPlan.LoadSubmissionPoint subpoint : 
-					plan.getList()) {
-				if (subpoint.getTimestamp() < lasttimestamp) {
-					System.out.println("submit records must be sorted by time with asc order");
-					continue;
-				}
-				if (subpoint.getTimestamp() > lasttimestamp) {
-					//we have submitted all required job at current timestamp;
-					//let's start bunch of jobs
-		//			loadengine.suspend();
-					System.out.println("let's sleep for " + 
-							(subpoint.getTimestamp() - lasttimestamp) + " seconds");
-					sleep((subpoint.getTimestamp() - lasttimestamp) * 1000);
-				}
-				//create a job according to subpoint
-				//loadengine.resume();
-				if (lasttimestamp != 0){
-					System.out.println("resume loadengine");
-				}
-				try {
-					loadengine.addJob(new Job(loadcreator.createWebdataScan(
-							WEBJOB_INPUT + SMALL_INPUT_PATH,
-							"out/webdatascan-small-out", 
-							subpoint.getNumReduce())));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				System.out.println("add new job");
+	
+	public void addAllJobs(){
+		int lasttimestamp = 0;
+		LoadSubmissionPlan plan = traceGenerator.getSubmissionPlan();
+		for (LoadSubmissionPlan.LoadSubmissionPoint subpoint : plan.getList()) {
+			if (subpoint.getTimestamp() < lasttimestamp) {
+				System.out
+						.println("submit records must be sorted by time with asc order");
+				continue;
+			}
+			// create a job according to subpoint
+			try{
+				loadcontroller.addJob(new LoadJob(loadcreator.createWebdataScan(
+						WEBJOB_INPUT + SMALL_INPUT_PATH,
+						"out/webdatascan-small-out",
+						subpoint.getNumReduce()),
+						subpoint.getTimestamp()));
+
 				lasttimestamp = subpoint.getTimestamp();
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+			catch (IOException e){
+				e.printStackTrace();
+			}
+			
 		}
+		
 	}
 }

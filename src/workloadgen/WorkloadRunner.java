@@ -1,22 +1,27 @@
 package workloadgen;
 
 import workloadgen.loadjobs.LoadJobClient;
+import workloadgen.loadjobs.LoadJobControl;
 
 
 public class WorkloadRunner {
 	
 	private LoadJobClient client = null;
+	private LoadJobControl loadcontroller = null;
 	private static WorkloadRunner _instance = null;
 	
 	public WorkloadRunner(String conf, String trace){	
-		client = new LoadJobClient(conf, trace);
+		loadcontroller = new LoadJobControl("WorkloadGen");
+		client = new LoadJobClient(conf, trace, loadcontroller);
 	}
 	
 	/**
 	 * the main loop 
 	 */
 	public void mainService(){
-		client.start();
+		client.addAllJobs();
+		//loadengine.run();
+		System.out.println(loadcontroller);
 	}
 	
 	/**

@@ -1,5 +1,8 @@
 package workloadgen.loadjobs;
 
+
+import java.util.ArrayList;
+
 import org.apache.hadoop.mapred.jobcontrol.Job;
 import org.apache.hadoop.mapred.jobcontrol.JobControl;
 
@@ -8,7 +11,7 @@ import org.apache.hadoop.mapred.jobcontrol.JobControl;
  *
  */
 public class LoadJobControl extends JobControl {
-
+	
 	public LoadJobControl(String groupName) {
 		super(groupName);
 	}
@@ -19,4 +22,13 @@ public class LoadJobControl extends JobControl {
 		return job.getJobID();
 	}
 	
+	@Override
+	public String toString(){
+		StringBuffer sb = new StringBuffer();
+		ArrayList<Job> arrlist = this.getWaitingJobs();
+		for (int i = 0; i < arrlist.size(); i++){
+			sb.append(arrlist.get(i).getJobID()).append("\n");
+		}
+		return sb.toString();
+	}
 }
