@@ -7,26 +7,23 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.jobcontrol.Job;
 
+import workloadgen.loadgen.LoadSubmissionPlan;
+import workloadgen.loadgen.LoadTraceGenerator;
+import workloadgen.loadgen.trace.LoadTraceReplayer;
 import workloadgen.utils.WorkloadGenConfParser;
-import workloadgen.utils.WorkloadGenTraceReplayer;
 
 public class LoadJobClient extends Thread{
 	
 	private LoadJobControl loadengine = null;
-	private WorkloadGenTraceReplayer traceReplayer= null;
+	private LoadTraceGenerator traceGenerator= null;
 	private LoadJobCreator loadcreator = null;
 	private Configuration config = null; //= initConfig();
 	private FileSystem fs = null; //= initFs();
 	private String confPath = null;
 	private String tracePath = null;
-	// we use gridmix2's jobs
-	// thanks, unknown authors
+	
 	private static String GRID_MIX_DATA = null;
 	private static String WEBJOB_INPUT = null;
-
-	private static final int NUM_OF_REDUCES_FOR_SMALL_JOB = 15;
-	//private static final int NUM_OF_REDUCES_FOR_MEDIUM_JOB = 15;
-	//private static final int NUM_OF_REDUCES_FOR_LARGE_JOB = 15;
 
 	private static String SMALL_INPUT_PATH = null;
 	//private static String MEDIUM_INPUT_PATH = null;
@@ -39,9 +36,9 @@ public class LoadJobClient extends Thread{
 	}
 	
 	private void init(){
-		traceReplayer = new WorkloadGenTraceReplayer(this.tracePath);
+		traceGenerator = new LoadTraceReplayer(this.tracePath);
 		loadengine = new LoadJobControl("WorkloadGen");
-		loadcreator = new LoadJobCreator(confPath);
+		loadcreator = new LoadJobCreator();
 		config = initConfig();
 		fs = initFs();
 		GRID_MIX_DATA = WorkloadGenConfParser.Instance(confPath).getString(
@@ -85,36 +82,14 @@ public class LoadJobClient extends Thread{
 		return conf;
 	}
 
-	private String [] setupWebdataScan(){
-		//TODO:support multiple kinds of sizes
-		final String indir = WEBJOB_INPUT + SMALL_INPUT_PATH;
-		final String outdir = "out/webdatascan-small-out";
-		int numReducers = NUM_OF_REDUCES_FOR_SMALL_JOB;
-		StringBuffer sb = new StringBuffer();
-		sb.append("-keepmap 0.2 ");
-		sb.append("-keepred 5 ");
-		sb.append("-inFormat org.apache.hadoop.mapred.SequenceFileInputFormat ");
-		sb.append("-outFormat org.apache.hadoop.mapred.SequenceFileOutputFormat ");
-		sb.append("-outKey org.apache.hadoop.io.Text ");
-		sb.append("-outValue org.apache.hadoop.io.Text ");
-		sb.append("-indir ").append(indir).append(" ");
-		sb.append("-outdir ").append(outdir).append(" ");
-		sb.append("-r ").append(numReducers);
-
-		String[] args = sb.toString().split(" ");
-	//	clearDir(outdir);
-		
-		return args;
-	}
-	
 	@Override
 	public void run(){
 		try {
 			int lasttimestamp = 0;
-			LoadJobSubmissionPlan plan = traceReplayer.getLoadTrace();
+			LoadSubmissionPlan plan = traceGenerator.getSubmissionPlan();
 		//	Thread LoadJobEngine = new Thread(loadengine);
 		//	LoadJobEngine.start();
-			for (LoadJobSubmissionPlan.LoadJobSubmissionPoint subpoint : 
+			for (LoadSubmissionPlan.LoadSubmissionPoint subpoint : 
 					plan.getList()) {
 				if (subpoint.getTimestamp() < lasttimestamp) {
 					System.out.println("submit records must be sorted by time with asc order");
@@ -133,7 +108,15 @@ public class LoadJobClient extends Thread{
 				if (lasttimestamp != 0){
 					System.out.println("resume loadengine");
 				}
-				//loadengine.addJob(new Job(loadcreator.createWebdataScan(setupWebdataScan())));
+				try {
+					loadengine.addJob(new Job(loadcreator.createWebdataScan(
+							WEBJOB_INPUT + SMALL_INPUT_PATH,
+							"out/webdatascan-small-out", 
+							subpoint.getNumReduce())));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				System.out.println("add new job");
 				lasttimestamp = subpoint.getTimestamp();
 			}

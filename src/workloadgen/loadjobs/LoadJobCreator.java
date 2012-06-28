@@ -17,19 +17,43 @@ import org.apache.hadoop.mapred.JobClient;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.lib.NullOutputFormat;
 
+/**
+ * create a concrete job 
+ *
+ */
 public class LoadJobCreator extends GenericMRLoadGenerator{
 	
-	public LoadJobCreator(String conf){
+	public LoadJobCreator(){
 	
 	}
 	
+	private String [] setupWebdataScan(String indir, String outdir, int numReducers){
+		//TODO:support multiple kinds of sizes
+		StringBuffer sb = new StringBuffer();
+		sb.append("-keepmap 0.2 ");
+		sb.append("-keepred 5 ");
+		sb.append("-inFormat org.apache.hadoop.mapred.SequenceFileInputFormat ");
+		sb.append("-outFormat org.apache.hadoop.mapred.SequenceFileOutputFormat ");
+		sb.append("-outKey org.apache.hadoop.io.Text ");
+		sb.append("-outValue org.apache.hadoop.io.Text ");
+		sb.append("-indir ").append(indir).append(" ");
+		sb.append("-outdir ").append(outdir).append(" ");
+		sb.append("-r ").append(numReducers);
+
+		String[] args = sb.toString().split(" ");
+	//	clearDir(outdir);
+		
+		return args;
+	}
+	
 	/**
-	 *  
-	 * @param argv
-	 * @return
+	 * create a WebdataScan job 
+	 * @param argv, the arguments to run jobs 
+	 * @return the JobConf object which describe the job
 	 * @throws IOException
 	 */
-	public JobConf createWebdataScan(String [] argv) throws IOException {
+	public JobConf createWebdataScan(String indir, String outdir, int numOfReducers) throws IOException {
+		String [] argv = setupWebdataScan(indir, outdir, numOfReducers);
 		JobConf job = new JobConf();
 	    job.setJarByClass(GenericMRLoadGenerator.class);
 	    job.setMapperClass(SampleMapper.class);

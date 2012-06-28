@@ -1,23 +1,26 @@
-package workloadgen.utils;
+package workloadgen.loadgen.trace;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import workloadgen.loadjobs.LoadJobSubmissionPlan;
+import workloadgen.loadgen.LoadSubmissionPlan;
+import workloadgen.loadgen.LoadTraceGenerator;
 
-public class WorkloadGenTraceReplayer {
+
+public class LoadTraceReplayer extends LoadTraceGenerator{
 	
 	private String tracePath = null;
-	LoadJobSubmissionPlan subPlan = null;
+	LoadSubmissionPlan subPlan = null;
 	
-	public WorkloadGenTraceReplayer(String tPath){
+	public LoadTraceReplayer(String tPath){
 		this.tracePath = tPath;
-		subPlan = new LoadJobSubmissionPlan();
+		subPlan = new LoadSubmissionPlan();
 	}
 	
-	public LoadJobSubmissionPlan getLoadTrace(){ 
+	@Override
+	public LoadSubmissionPlan getSubmissionPlan(){ 
 		parse();
 		return subPlan;
 	}
@@ -34,11 +37,12 @@ public class WorkloadGenTraceReplayer {
 				if (matcher.find()) {
 					for (int i = 0; i < Integer.parseInt(matcher.group(3)); i++)
 					{
-						LoadJobSubmissionPlan.LoadJobSubmissionPoint subPoint = 
-								subPlan.new LoadJobSubmissionPoint(
+						LoadSubmissionPlan.LoadSubmissionPoint subPoint = 
+								subPlan.new LoadSubmissionPoint(
 										Integer.parseInt(matcher.group(2)),
 										matcher.group(1),
-										Integer.parseInt(matcher.group(3)));
+										Integer.parseInt(matcher.group(3)),
+										Integer.parseInt(matcher.group(4)));
 						subPlan.addNewPoint(subPoint);
 					}
 				}
