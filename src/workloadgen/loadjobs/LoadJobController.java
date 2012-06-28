@@ -1,5 +1,11 @@
 package workloadgen.loadjobs;
 
+import java.util.Hashtable;
+import java.util.Map;
+
+import org.apache.hadoop.mapred.jobcontrol.Job;
+
+import workloadgen.loadjobs.LoadJob.JobState;
 import workloadgen.utils.LoadJobQueue;
 
 
@@ -53,7 +59,7 @@ public class LoadJobController implements Runnable{
 	public String addJob(LoadJob job){
 		String id = this.getNextJobID();
 	    job.setJobID(id);
-	    job.setState(LoadJob.WAITING);
+	    job.setState(LoadJob.JobState.WAITING);
 	    this.addToQueue(job);
 		return job.getJobID();
 	}
@@ -89,17 +95,17 @@ public class LoadJobController implements Runnable{
 		addToQueue(job, queue);
 	}
 	
-	private LoadJobQueue<LoadJob> getQueue(int state) {
+	private LoadJobQueue<LoadJob> getQueue(JobState state) {
 		LoadJobQueue<LoadJob> retv = null;
-		if (state == LoadJob.WAITING) {
+		if (state == JobState.WAITING) {
 			retv = this.waitingQueue;
-		} else if (state == LoadJob.READY) {
+		} else if (state == JobState.READY) {
 			retv = this.readyQueue;
-		} else if (state == LoadJob.RUNNING) {
+		} else if (state == JobState.RUNNING) {
 			retv = this.runningQueue;
-		} else if (state == LoadJob.SUCCESS) {
+		} else if (state == JobState.SUCCESS) {
 			retv = this.successfulQueue;
-		} else if (state == LoadJob.FAILED || state == LoadJob.DEPENDENT_FAILED) {
+		} else if (state == JobState.FAILED || state == JobState.DEPENDENT_FAILED) {
 			retv = this.failedQueue;
 		}
 		return retv;
@@ -114,11 +120,9 @@ public class LoadJobController implements Runnable{
 		LoadJobQueue<LoadJob> oldjobs = waitingQueue;
 		waitingQueue = new LoadJobQueue<LoadJob>();
 		for (LoadJob job : oldjobs){
-			if (job.checkSubmitState(currentTime)){
-				System.out.println(job.getJobID() + " is ready");
-				job.setState(LoadJob.READY);
-			}
-			else{
+			job.checkState(currentTime);
+			System.out.println("job " + job.getJobID() + " with state " + job.getState().toString());
+			if (job.getState() == JobState.WAITING){
 				this.suspendDuration = job.submitTime - currentTime;
 			}
 			this.addToQueue(job);
@@ -126,20 +130,21 @@ public class LoadJobController implements Runnable{
 	}
 	
 	private void checkRunningJobs(){
-		//TODO:finish all
-		LoadJobQueue<LoadJob> oldjobs = runningQueue;
-		runningQueue = new LoadJobQueue<LoadJob>();
-		for(LoadJob job : oldjobs){
-			job.setState(LoadJob.SUCCESS);
-			addToQueue(job);
-		}
+		LoadJobQueue<LoadJob> oldJobs = null;
+	    oldJobs = this.readyQueue;
+	    this.readyQueue = new LoadJobQueue<LoadJob>();
+		
+	    for (LoadJob nextJob : oldJobs) {
+	      nextJob.submit();
+	      this.addToQueue(nextJob);
+	    }
 	}
 	
 	private void startReadyJobs(){
 		LoadJobQueue<LoadJob> oldjobs = readyQueue;
 		readyQueue = new LoadJobQueue<LoadJob>();
 		for (LoadJob job: oldjobs){
-			job.setState(LoadJob.RUNNING);
+			job.setState(JobState.RUNNING);
 			addToQueue(job);
 		}
 	}

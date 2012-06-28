@@ -121,4 +121,9 @@ public class LoadJobQueue<E> implements Queue<E> {
 		if (list.isEmpty()) return null;
 		return list.remove(0);
 	}
+	
+	public E tail(){
+		if (list.isEmpty()) return null;
+		return list.get(list.size() - 1);
+	}
 }
