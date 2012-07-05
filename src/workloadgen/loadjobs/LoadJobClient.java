@@ -2,10 +2,6 @@ package workloadgen.loadjobs;
 
 import java.io.IOException;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-
 import workloadgen.loadgen.LoadSubmissionPlan;
 import workloadgen.loadgen.LoadTraceGenerator;
 import workloadgen.loadgen.trace.LoadTraceReplayer;
@@ -16,8 +12,6 @@ public class LoadJobClient {
 	private LoadJobController loadcontroller= null;
 	private LoadTraceGenerator traceGenerator= null;
 	private LoadJobCreator loadcreator = null;
-	private Configuration config = null; //= initConfig();
-	private FileSystem fs = null; //= initFs();
 	private String confPath = null;
 	private String tracePath = null;
 	
@@ -27,6 +21,7 @@ public class LoadJobClient {
 	private static String SMALL_INPUT_PATH = null;
 	//private static String MEDIUM_INPUT_PATH = null;
 	//private static String LARGE_INPUT_PATH = null;
+	private int totalSubmission = 0;
 	
 	public LoadJobClient(String conf, String trace, LoadJobController controller){
 		this.confPath = conf;
@@ -38,42 +33,18 @@ public class LoadJobClient {
 	private void init(){
 		traceGenerator = new LoadTraceReplayer(this.tracePath);
 		loadcreator = new LoadJobCreator();
-		config = initConfig();
-		fs = initFs();
 		GRID_MIX_DATA = WorkloadGenConfParser.Instance(confPath).getString(
-				"workloadgen.input.root", "/gridmix/data");
+				"workloadgen.input.root", "/user/zhunan/gridmix/data");
 		SMALL_INPUT_PATH = WorkloadGenConfParser.Instance(confPath).getString(
 				"workloadgen.input.smallpath", 
-				 "{part-00000,part-00001,part-00002}");
-		WEBJOB_INPUT = GRID_MIX_DATA + "/WebSimulationBlockCompressed";
+				 "part-00000");
+		WEBJOB_INPUT = GRID_MIX_DATA + "/test/";
 	}
 	
-	private FileSystem initFs() {
-		try {
-			return FileSystem.get(config);
-		} catch (Exception e) {
-			System.out.println("fs initation error: " + e.getMessage());
-		}
-		return null;
-	}
-	
-	private Configuration initConfig() {
-		Configuration conf = new Configuration();
-		try {
-			Path fileResource = new Path(this.confPath);
-			conf.addResource(fileResource);
-		} catch (Exception e) {
-			System.err.println("Error reading config file " + this.confPath + ":"
-					+ e.getMessage());
-			return null;
-		}
-		return conf;
-	}
-
-	
-	public void addAllJobs(){
+	public void addAllJobs() throws Exception{
 		int lasttimestamp = 0;
 		LoadSubmissionPlan plan = traceGenerator.getSubmissionPlan();
+		System.out.println("plan length:" + plan.getList().size());
 		for (LoadSubmissionPlan.LoadSubmissionPoint subpoint : plan.getList()) {
 			if (subpoint.getTimestamp() < lasttimestamp) {
 				System.out.println("submit records must be sorted by time with asc order");
@@ -81,11 +52,17 @@ public class LoadJobClient {
 			}
 			// create a job according to subpoint
 			try{
-				loadcontroller.addJob(loadcreator.createWebdataScan(
+				/*LoadJob job = loadcreator.createWebdataScan(
 						WEBJOB_INPUT + SMALL_INPUT_PATH,
-						"out/webdatascan-small-out",
+						"out/webdatascan-small-out-" + (++this.totalSubmission),
 						subpoint.getNumReduce(),
-						subpoint.getTimestamp()));
+						subpoint.getTimestamp());*/
+				LoadJob job = loadcreator.createGrep("input", 
+						"out", 
+						subpoint.getNumReduce(), 
+						"dfs[a-z.]+",
+						subpoint.getTimestamp());
+				loadcontroller.addJob(job);
 				lasttimestamp = subpoint.getTimestamp();
 			}
 			catch (IOException e){

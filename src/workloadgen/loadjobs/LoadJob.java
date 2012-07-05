@@ -92,6 +92,7 @@ public class LoadJob{
 		} catch (IOException ioe) {
 			this.state = JobState.FAILED;
 			this.message = StringUtils.stringifyException(ioe);
+			System.out.println(this.message);
 			try {
 				if (running != null)
 					running.killJob();
@@ -170,7 +171,7 @@ public class LoadJob{
 		this.state = s;
 	}
 	
-	public JobState getState(){
+	synchronized public JobState getState(){
 		return this.state;
 	}
 
@@ -207,13 +208,18 @@ public class LoadJob{
 		this.jobID = id;
 	}
 	
+	public JobConf getJobConf(){
+		return this.theJobConf;
+	}
+	
 	/**
 	 * upgrade the visibility of parent's function
 	 */
 	synchronized void submit(){
 		try {
+			FileSystem fs = FileSystem.get(theJobConf);
 			if (theJobConf.getBoolean("create.empty.dir.if.nonexist", false)) {
-				FileSystem fs = FileSystem.get(theJobConf);
+				//System.out.println("FS default path:" + FileSystem.getDefaultUri(theJobConf));
 				Path inputPaths[] = FileInputFormat.getInputPaths(theJobConf);
 				for (int i = 0; i < inputPaths.length; i++) {
 					if (!fs.exists(inputPaths[i])) {
@@ -228,9 +234,11 @@ public class LoadJob{
 			RunningJob running = jc.submitJob(theJobConf);
 			this.mapredJobID = running.getID();
 			this.state = JobState.RUNNING;
-		} catch (IOException ioe) {
+			System.out.println("run job:" + this.mapredJobID);
+		} catch (Exception ioe) {
 			this.state = JobState.FAILED;
 			this.message = StringUtils.stringifyException(ioe);
+			System.out.println(this.jobID + ":" + this.message);
 		}
 	}
 	

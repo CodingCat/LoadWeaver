@@ -22,9 +22,10 @@
 
 ## Environment configuration
 # Hadoop installation
-export HADOOP_VERSION=hadoop-0.18.2-dev
-export HADOOP_HOME=${HADOOP_INSTALL_HOME}/${HADOOP_VERSION}
-export HADOOP_CONF_DIR=
+export HADOOP_VERSION=hadoop-1.0.3
+export HADOOP_HOME=/Users/zhunan/codes/hadoop-1.0.3
+#${HADOOP_INSTALL_HOME}/${HADOOP_VERSION}
+export HADOOP_CONF_DIR=/Users/zhunan/codes/hadoop-1.0.3/conf
 export USE_REAL_DATASET=TRUE
 
 export APP_JAR=${HADOOP_HOME}/${HADOOP_VERSION}-test.jar

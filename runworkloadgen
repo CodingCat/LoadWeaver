@@ -2,16 +2,14 @@
 
 ## Environment configuration
 
-WORKLOADGEN_DIR=`dirname "$0"`
-WORKLOADGEN_DIR=`cd "$GRID_DIR"; pwd`
-source $GRID_DIR/gridmix-env-2
+source ./gridmix-env-2
 
 Date=`date +%F-%H-%M-%S-%N`
 echo $Date >  $1_start.out
 
 export HADOOP_CLASSPATH=${APP_JAR}:${EXAMPLE_JAR}:${STREAMING_JAR}
 export LIBJARS=${APP_JAR},${EXAMPLE_JAR},${STREAMING_JAR}
-${HADOOP_HOME}/bin/hadoop jar workloadgen.jar workloadgen.WorkloadRunner -libjars ${LIBJARS}
+${HADOOP_HOME}/bin/hadoop jar workloadgen.jar config.xml exampleTrace.txt workloadgen.WorkloadRunner -libjars ${LIBJARS}
 
 Date=`date +%F-%H-%M-%S-%N`
 echo $Date >  $1_end.out
