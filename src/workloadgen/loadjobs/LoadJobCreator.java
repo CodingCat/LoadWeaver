@@ -21,6 +21,7 @@ import org.apache.hadoop.mapred.SequenceFileOutputFormat;
 import org.apache.hadoop.mapred.lib.LongSumReducer;
 import org.apache.hadoop.mapred.lib.NullOutputFormat;
 import org.apache.hadoop.mapred.lib.RegexMapper;
+import org.eclipse.jetty.util.log.Log;
 
 import workloadgen.WorkloadRunner;
 
