@@ -15,13 +15,12 @@ public class LoadJobClient {
 	private String confPath = null;
 	private String tracePath = null;
 	
-	private static String GRID_MIX_DATA = null;
-	private static String WEBJOB_INPUT = null;
+	private static String USER_PREFIX = null;
+	private static String INPUT_DATA_ROOT = null;
+	
+	private static String GREP_SMALL_INPUT = null;
 
 	private static String SMALL_INPUT_PATH = null;
-	//private static String MEDIUM_INPUT_PATH = null;
-	//private static String LARGE_INPUT_PATH = null;
-	private int totalSubmission = 0;
 	
 	public LoadJobClient(String conf, String trace, LoadJobController controller){
 		this.confPath = conf;
@@ -33,12 +32,24 @@ public class LoadJobClient {
 	private void init(){
 		traceGenerator = new LoadTraceReplayer(this.tracePath);
 		loadcreator = new LoadJobCreator();
-		GRID_MIX_DATA = WorkloadGenConfParser.Instance(confPath).getString(
-				"workloadgen.input.root", "/user/zhunan/gridmix/data");
+		USER_PREFIX = WorkloadGenConfParser.Instance(confPath).getString(
+				"workloadgen.input.user_prefix", "");
+		INPUT_DATA_ROOT = WorkloadGenConfParser.Instance(confPath).getString(
+				"workloadgen.input.root", "/workloadgen/data");
 		SMALL_INPUT_PATH = WorkloadGenConfParser.Instance(confPath).getString(
 				"workloadgen.input.smallpath", 
-				 "part-00000");
-		WEBJOB_INPUT = GRID_MIX_DATA + "/test/";
+				 "part-00000,part-00001,part-00002");
+		GREP_SMALL_INPUT = getInputPath(USER_PREFIX + INPUT_DATA_ROOT + "/grep_data",
+				SMALL_INPUT_PATH);
+	}
+	
+	private String getInputPath(String base, String filePaths){
+		String [] files = filePaths.split(",");
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < files.length; i++){
+			sb.append(base + "/" + files[i]).append(",");
+		}
+		return sb.substring(0, sb.length() - 1);
 	}
 	
 	public void addAllJobs() throws Exception{
@@ -52,13 +63,8 @@ public class LoadJobClient {
 			}
 			// create a job according to subpoint
 			try{
-				/*LoadJob job = loadcreator.createWebdataScan(
-						WEBJOB_INPUT + SMALL_INPUT_PATH,
-						"out/webdatascan-small-out-" + (++this.totalSubmission),
-						subpoint.getNumReduce(),
-						subpoint.getTimestamp());*/
-				LoadJob job = loadcreator.createGrep("input", 
-						"out", 
+				LoadJob job = loadcreator.createGrep(GREP_SMALL_INPUT, 
+						"grep_out", 
 						subpoint.getNumReduce(), 
 						"dfs[a-z.]+",
 						subpoint.getTimestamp());

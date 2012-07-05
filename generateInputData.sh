@@ -12,7 +12,7 @@ UNCOMPRESSED_DATA_BYTES=102400
 NUM_MAPS=20
 
 ## Data sources
-export INPUT_DATA=/gridmix/data
+export INPUT_DATA=/workloadgen/data
 
 export GREP_DATA=${INPUT_DATA}/grep_data
 
