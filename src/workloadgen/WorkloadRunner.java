@@ -51,7 +51,7 @@ public class WorkloadRunner {
 	      }
 	    }
 	    long endTime = System.currentTimeMillis();
-	    System.out.println("GridMix results:");
+	    System.out.println("WorkloadGen results:");
 	    System.out.println("Total num of Jobs: " + loadcontroller.getTotalJobNum());
 	    System.out.println("ExecutionTime: " + ((endTime-startTime)/1000));
 	}

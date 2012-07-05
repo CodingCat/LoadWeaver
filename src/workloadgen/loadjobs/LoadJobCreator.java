@@ -33,7 +33,7 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 			throws Exception{
 		JobConf grepJob = new JobConf();
 		grepJob.setJobName("grep-search");
-		Path tempDir = new Path("grep-temp-"
+		Path outDir = new Path(outdir
 				+ Integer.toString(new Random().nextInt(Integer.MAX_VALUE)));
 		FileInputFormat.setInputPaths(grepJob, indir);
 
@@ -44,11 +44,11 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 		grepJob.setReducerClass(LongSumReducer.class);
 		grepJob.setNumReduceTasks(numReducers);
 
-		FileOutputFormat.setOutputPath(grepJob, tempDir);
+		FileOutputFormat.setOutputPath(grepJob, outDir);
 		grepJob.setOutputFormat(SequenceFileOutputFormat.class);
 		grepJob.setOutputKeyClass(Text.class);
 		grepJob.setOutputValueClass(LongWritable.class);
-		clearDir(outdir);
+		clearDir(outDir.toString());
 		return grepJob;
 	}
 	

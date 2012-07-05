@@ -82,6 +82,7 @@ public class LoadJobController implements Runnable{
 	    job.setJobID(id);
 	    job.setState(LoadJob.JobState.WAITING);
 	    this.addToQueue(job);
+	    this.totalJobNum++;
 		return job.getJobID();
 	}
 	
