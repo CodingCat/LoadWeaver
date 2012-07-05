@@ -2,7 +2,7 @@
 
 ## Environment configuration
 
-source ./gridmix-env-2
+source ./env_variables
 
 Date=`date +%F-%H-%M-%S-%N`
 echo $Date >  $1_start.out

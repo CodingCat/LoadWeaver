@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 export HADOOP_VERSION=hadoop-1.0.3
-export HADOOP_HOME=/usr/local/hadoop-1.0.3
+export HADOOP_HOME=/Users/zhunan/codes/hadoop-1.0.3
 
 export APP_JAR=${HADOOP_HOME}/${HADOOP_VERSION}-test.jar
 export EXAMPLE_JAR=${HADOOP_HOME}/${HADOOP_VERSION}-examples.jar
