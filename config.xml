@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration SYSTEM "WorkloadGen-Conf.dtd" >
-<configuration> 
+<configuration>
+	<property>
+		<name>workloadgen.jobtracker.addr</name>
+		<value>localhost:50002</value>
+	</property>
+	<property>
+		<name>workloadgen.input.smallpath</name>
+		<value>*</value>
+	</property>
 </configuration>

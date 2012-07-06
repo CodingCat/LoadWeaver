@@ -42,8 +42,7 @@ public class WorkloadRunner {
 	          + loadcontroller.getSuccessNum());
 	      System.out.println("Jobs in failed state: "
 	          + loadcontroller.getFailedNum());
-	      System.out.println("\n");
-
+	      System.out.println(loadcontroller.getClusterStatus());
 	      try {
 	        Thread.sleep(10 * 1000);
 	      } catch (Exception e) {

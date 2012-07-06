@@ -1,8 +1,10 @@
 package workloadgen.loadjobs;
 
+import java.io.IOException;
+
+
 import workloadgen.loadjobs.LoadJob.JobState;
 import workloadgen.utils.LoadJobQueue;
-
 
 /**
  * later, I will move the logic of job execution here 
@@ -35,6 +37,13 @@ public class LoadJobController implements Runnable{
 	private long nextJobID = -1;
 	private String groupName;
 	
+	//cluster status
+	private int totalMapSlots = -1;
+	private int totalReduceSlots = -1;
+	private int runningMapNum = -1;
+	private int runningReduceNum = -1;
+	private int idleMapSlots = -1;
+	private int idleReduceSlots = -1;
 	
 	public LoadJobController(String gName) {
 		this.waitingQueue = new LoadJobQueue<LoadJob>();
@@ -42,11 +51,39 @@ public class LoadJobController implements Runnable{
 	    this.runningQueue = new LoadJobQueue<LoadJob>();
 	    this.successfulQueue = new LoadJobQueue<LoadJob>();
 	    this.failedQueue = new LoadJobQueue<LoadJob>();
-		controllerState = JobControllerState.READY;
+	    controllerState = JobControllerState.READY;
 		currentTime = 0;
 		groupName = gName;
 	}
 	
+	public String getClusterStatus() throws IOException{
+		updateClusterStatus();
+		StringBuffer sb = new StringBuffer();
+		sb.append("totalMapSlots:" + this.totalMapSlots).append("\n");
+		sb.append("totalReduceSlots:" + this.totalReduceSlots).append("\n");
+		sb.append("RunningMapTasks:" + this.runningMapNum).append("\n");
+		sb.append("RunningReduceTasks:" + this.runningReduceNum).append("\n");
+		sb.append("IdleMapSlots:" + this.idleMapSlots).append("\n");
+		sb.append("IdleReduceSlots:" + this.idleReduceSlots).append("\n");
+		return sb.toString();
+	}
+	
+	private void updateClusterStatus() throws IOException{
+		if (this.runningQueue.size() > 0){
+			this.totalMapSlots = this.runningQueue.element().jc.getClusterStatus().getMaxMapTasks();
+			this.totalReduceSlots = this.runningQueue.element().jc.getClusterStatus().getMaxReduceTasks();
+			this.runningMapNum = this.runningQueue.element().jc.getClusterStatus().getMapTasks();
+			this.runningReduceNum = this.runningQueue.element().jc.getClusterStatus().getReduceTasks();
+			this.idleMapSlots = this.totalMapSlots - this.runningMapNum;
+			this.idleReduceSlots = this.totalReduceSlots - this.runningReduceNum;
+		}
+		else{
+			this.runningMapNum = 0;
+			this.runningReduceNum = 0;
+			this.idleMapSlots = this.totalMapSlots - this.runningMapNum;
+			this.idleReduceSlots = this.totalReduceSlots - this.runningReduceNum;
+		}
+	}
 	
 	private String getNextJobID() {
 		nextJobID += 1;

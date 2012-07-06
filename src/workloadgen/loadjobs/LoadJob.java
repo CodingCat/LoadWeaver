@@ -31,7 +31,7 @@ public class LoadJob{
 	private String message; // some info for human consumption,
 	// e.g. the reason why the job failed
 	private LoadJobQueue<LoadJob> dependingJobs; // the jobs the current job depends on
-	private JobClient jc = null; // the map reduce job client
+	JobClient jc = null; // the map reduce job client
 
 	private JobState state;
 	int submitTime = 0;
