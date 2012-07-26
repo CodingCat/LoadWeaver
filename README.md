@@ -1,4 +1,4 @@
-StatisticalWorkloadGenerator
+LoadWeaver
 =============
 
-A statistical-model-based workload generator for Hadoop
+A flexible and lightweight workload generator for Hadoop
