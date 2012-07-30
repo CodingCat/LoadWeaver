@@ -39,10 +39,12 @@ public class LoadTraceReplayer extends LoadTraceGenerator{
 					{
 						LoadSubmissionPlan.LoadSubmissionPoint subPoint = 
 								subPlan.new LoadSubmissionPoint(
-										Integer.parseInt(matcher.group(2)),
 										matcher.group(1),
+										Integer.parseInt(matcher.group(2)),
 										Integer.parseInt(matcher.group(3)),
-										Integer.parseInt(matcher.group(4)));
+										Integer.parseInt(matcher.group(4)),
+										matcher.group(5),
+										matcher.group(6));
 						subPlan.addNewPoint(subPoint);
 					}
 				}

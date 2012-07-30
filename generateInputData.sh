@@ -16,6 +16,9 @@ export INPUT_DATA=/workloadgen/data
 
 export GREP_DATA=${INPUT_DATA}/grep_data
 
+#clear existed data
+${HADOOP_HOME}/bin/hadoop fs -rmr /workloadgen/data
+
 #for grep
 ${HADOOP_HOME}/bin/hadoop jar \
   ${EXAMPLE_JAR} randomtextwriter \

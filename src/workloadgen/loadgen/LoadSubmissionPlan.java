@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class LoadSubmissionPlan {
 
 	enum LoadJobType{
+		Grep,
 		webdataScan,
 		webdataSort
 	};
@@ -21,12 +22,21 @@ public class LoadSubmissionPlan {
 		private int subTime;
 		private int numOfJobs;
 		private int numOfReduce;
+		private String inputSize;
+		private String queueName;
 		
-		public LoadSubmissionPoint(int timestamp, String type, int numJobs, int numReduce){
+		public LoadSubmissionPoint(String type, int timestamp, int numJobs, int numReduce, String isize, 
+				String queue){
 			subTime = timestamp;
 			jobType = LoadJobType.valueOf(type);
 			numOfJobs = numJobs;
 			numOfReduce = numReduce;
+			inputSize = isize; 
+			queueName = queue;
+		}
+		
+		public String getJobType(){
+			return this.jobType.toString();
 		}
 		
 		public int getTimestamp(){
@@ -39,6 +49,14 @@ public class LoadSubmissionPlan {
 		
 		public int getNumReduce(){
 			return this.numOfReduce;
+		}
+		
+		public String getInputSize(){
+			return this.inputSize;
+		}
+		
+		public String getQueueName(){
+			return this.queueName;
 		}
 		
 		/**

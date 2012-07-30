@@ -73,7 +73,10 @@ public class WorkloadRunner {
 	 * @param args[1] tracePath
 	 */
 	public static void main(String[] args) throws Exception{
-		
+		if (args.length != 2){
+			System.out.println("Usage: LoadWeaver confPath tracePath");
+			return ;
+		}
 		WorkloadRunner.Instance(args[0], args[1]).mainService();
 	}
 

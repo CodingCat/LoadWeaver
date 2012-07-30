@@ -6,10 +6,6 @@ import java.io.IOException;
 import workloadgen.loadjobs.LoadJob.JobState;
 import workloadgen.utils.LoadJobQueue;
 
-/**
- * later, I will move the logic of job execution here 
- *
- */
 public class LoadJobController implements Runnable{
 
 	//I have to set these variables, since in JobControl, the runnerState is private

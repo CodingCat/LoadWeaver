@@ -2,11 +2,11 @@
 <!DOCTYPE configuration SYSTEM "WorkloadGen-Conf.dtd" >
 <configuration>
 	<property>
-		<name>workloadgen.jobtracker.addr</name>
-		<value>localhost:50002</value>
+		<name>workloadgen.input.user_prefix</name>
+		<value>/user/zhunan</value>
 	</property>
 	<property>
-		<name>workloadgen.input.smallpath</name>
-		<value>*</value>
+		<name>workloadgen.jobtracker.addr</name>
+		<value>localhost:50002</value>
 	</property>
 </configuration>
