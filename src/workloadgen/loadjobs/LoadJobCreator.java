@@ -109,7 +109,7 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 		grepJob.setOutputValueClass(LongWritable.class);
 		clearDir(outDir.toString());
 		if (MULTIQUEUE == true){
-			grepJob.setQueueName(queue);
+			grepJob.set("mapred.fairscheduler.pool", queue);
 		}
 		
 		return grepJob;

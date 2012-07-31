@@ -3,10 +3,14 @@
 <configuration>
 	<property>
 		<name>workloadgen.input.user_prefix</name>
-		<value>/user/zhunan</value>
+		<value></value>
 	</property>
 	<property>
 		<name>workloadgen.jobtracker.addr</name>
 		<value>localhost:50002</value>
+	</property>
+	<property>
+		<name>workloadgen.system.multiqueue</name>
+		<value>true</value>
 	</property>
 </configuration>

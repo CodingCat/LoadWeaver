@@ -53,6 +53,9 @@ public class WorkloadGenConfParser {
 	private String getTagValue(String tagName, Element ele){
 		NodeList nlList = ele.getElementsByTagName(tagName).item(0).getChildNodes();
 		Node nValue = (Node) nlList.item(0);
+		if (nValue == null){
+			return null;
+		}
 		return nValue.getNodeValue();
 	}
 	
