@@ -3,7 +3,7 @@
 <configuration>
 	<property>
 		<name>workloadgen.input.user_prefix</name>
-		<value></value>
+		<value>../../</value>
 	</property>
 	<property>
 		<name>workloadgen.jobtracker.addr</name>
