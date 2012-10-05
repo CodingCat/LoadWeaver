@@ -13,4 +13,3 @@ ${HADOOP_HOME}/bin/hadoop jar loadweaver.jar config.xml exampleTrace.txt #worklo
 
 Date=`date +%F-%H-%M-%S-%N`
 echo $Date >  $1_end.out
-
