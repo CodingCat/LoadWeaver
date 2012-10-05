@@ -66,10 +66,11 @@ public class LoadJobController implements Runnable{
 	
 	private void updateClusterStatus() throws IOException{
 		if (this.runningQueue.size() > 0){
-			this.totalMapSlots = this.runningQueue.element().jc.getClusterStatus().getMaxMapTasks();
-			this.totalReduceSlots = this.runningQueue.element().jc.getClusterStatus().getMaxReduceTasks();
-			this.runningMapNum = this.runningQueue.element().jc.getClusterStatus().getMapTasks();
-			this.runningReduceNum = this.runningQueue.element().jc.getClusterStatus().getReduceTasks();
+			LoadJob firstJob = this.runningQueue.element();
+			this.totalMapSlots = firstJob.jc.getClusterStatus().getMaxMapTasks();
+			this.totalReduceSlots = firstJob.jc.getClusterStatus().getMaxReduceTasks();
+			this.runningMapNum = firstJob.jc.getClusterStatus().getMapTasks();
+			this.runningReduceNum = firstJob.jc.getClusterStatus().getReduceTasks();
 			this.idleMapSlots = this.totalMapSlots - this.runningMapNum;
 			this.idleReduceSlots = this.totalReduceSlots - this.runningReduceNum;
 		}
