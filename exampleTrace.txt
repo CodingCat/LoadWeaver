@@ -1,2 +1,0 @@
-#jobtype, submittime, numOfjobs, numOfreducers, inputsize, queue
-Grep	0	1	5	small	queue1
