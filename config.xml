@@ -11,6 +11,6 @@
 	</property>
 	<property>
 		<name>workloadgen.system.multiqueue</name>
-		<value>true</value>
+		<value>false</value>
 	</property>
 </configuration>

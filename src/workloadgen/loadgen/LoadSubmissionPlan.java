@@ -9,8 +9,8 @@ public class LoadSubmissionPlan {
 
 	enum LoadJobType{
 		Grep,
-		webdataScan,
-		webdataSort
+		Sort,
+		WebSort,
 	};
 	
 	/**

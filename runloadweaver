@@ -9,7 +9,7 @@ echo $Date >  $1_start.out
 
 export HADOOP_CLASSPATH=${APP_JAR}:${EXAMPLE_JAR}:${STREAMING_JAR}
 export LIBJARS=${APP_JAR},${EXAMPLE_JAR},${STREAMING_JAR}
-${HADOOP_HOME}/bin/hadoop jar loadweaver.jar config.xml exampleTrace.txt #workloadgen.WorkloadRunner -libjars ${LIBJARS}
+${HADOOP_HOME}/bin/hadoop jar loadweaver.jar config.xml exampleTrace.trace #workloadgen.WorkloadRunner -libjars ${LIBJARS}
 
 Date=`date +%F-%H-%M-%S-%N`
 echo $Date >  $1_end.out
