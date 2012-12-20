@@ -177,17 +177,19 @@ public class LoadJobController implements Runnable{
 	}
 
 	synchronized private void checkWaitingJobs(){
+		int s = -1;
 		LoadJobQueue<LoadJob> oldjobs = waitingQueue;
 		waitingQueue = new LoadJobQueue<LoadJob>();
 		for (LoadJob job : oldjobs){
 			job.checkState(currentTime);
 			System.out.println("job " + job.getJobID() + " with state " + 
 					job.getState().toString());
-			if (job.getState() == JobState.WAITING){
-				this.suspendDuration = job.submitTime - currentTime;
+			if (job.getState() == JobState.WAITING && s == -1){
+				s = job.submitTime - currentTime;
 			}
 			this.addToQueue(job);
 		}
+		suspendDuration = s; 
 	}
 	
 	synchronized private void checkRunningJobs(){
@@ -217,6 +219,7 @@ public class LoadJobController implements Runnable{
 		while (this.controllerState != JobControllerState.STOPPING) {
 			while (this.controllerState == JobControllerState.SUSPENDED) {
 				try {
+					System.out.println("will sleep for " + suspendDuration + " seconds");
 					Thread.sleep(suspendDuration * 1000);
 					if (this.controllerState == JobControllerState.SUSPENDED){
 						this.controllerState = JobControllerState.RUNNING;

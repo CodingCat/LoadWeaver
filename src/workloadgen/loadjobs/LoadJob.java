@@ -163,7 +163,7 @@ public class LoadJob{
 	}
 	
 	private boolean checkSubmitState(int curTime){
-		//System.out.println("time:" + curTime + " submitTime:" + submitTime);
+		System.out.println("time:" + curTime + " submitTime:" + submitTime);
 		return (curTime >= submitTime);
 	}
 	
