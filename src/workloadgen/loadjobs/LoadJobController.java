@@ -219,6 +219,7 @@ public class LoadJobController implements Runnable{
 		while (this.controllerState != JobControllerState.STOPPING) {
 			while (this.controllerState == JobControllerState.SUSPENDED) {
 				try {
+					if (suspendDuration <= 0) break;
 					System.out.println("will sleep for " + suspendDuration + " seconds");
 					Thread.sleep(suspendDuration * 1000);
 					if (this.controllerState == JobControllerState.SUSPENDED){
