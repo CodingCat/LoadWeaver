@@ -189,7 +189,7 @@ public class LoadJobController implements Runnable{
 			}
 			this.addToQueue(job);
 		}
-		suspendDuration = s; 
+		suspendDuration = Math.max(s, 0); 
 	}
 	
 	synchronized private void checkRunningJobs(){
