@@ -53,7 +53,7 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 				"workloadgen.input.root", "/workloadgen/data");
 		SMALL_INPUT_PATH = WorkloadGenConfParser.Instance(confPath).getString(
 				"workloadgen.input.smallpath", 
-				 "part-00000,part-00001,part-00002");
+				 "part-000*0");
 		MEDIUM_INPUT_PATH = WorkloadGenConfParser.Instance(confPath).getString(
 				"workloadgen.input.meidumpath", 
 				 "part-000*0,part-000*1,part-000*2");
