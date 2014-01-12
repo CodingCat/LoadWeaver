@@ -85,7 +85,7 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 	}
 	
 	private void registerJobCreatingHandlers() throws SecurityException, NoSuchMethodException{
-		Class<?> [] parameters = {int.class, int.class, String.class, String.class};
+		Class<?> [] parameters = {int.class, int.class, String.class, String.class, int.class};
 		JobCreatingHandlers.put("Grep", 
 				LoadJobCreator.class.getMethod("createGrep", parameters));
 		JobCreatingHandlers.put("Sort", 
@@ -253,14 +253,15 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 		return conf;
 	}
 	
-	public LoadJob createJob(String jobtype, int numReducers, int timestamp, String inputSize, String QueueName) 
+	public LoadJob createJob(String jobtype, int numReducers, int timestamp, String inputSize,
+                             String QueueName, int jobid)
 			throws IllegalArgumentException, 
 			IllegalAccessException, 
 			InvocationTargetException, 
 			SecurityException, 
 			NoSuchMethodException{
 		Method m = JobCreatingHandlers.get(jobtype);
-		LoadJob newJob = (LoadJob) m.invoke(this, numReducers, timestamp, inputSize, QueueName);
+		LoadJob newJob = (LoadJob) m.invoke(this, numReducers, timestamp, inputSize, QueueName, jobid);
 		return newJob;
 	}
 	

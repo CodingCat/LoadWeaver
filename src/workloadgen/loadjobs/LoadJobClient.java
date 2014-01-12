@@ -37,6 +37,7 @@ public class LoadJobClient {
 		int lasttimestamp = 0;
 		LoadSubmissionPlan plan = traceGenerator.getSubmissionPlan();
 		System.out.println("plan length:" + plan.getList().size());
+        int currentjobID = 0;
 		for (LoadSubmissionPlan.LoadSubmissionPoint subpoint : plan.getList()) {
 			if (subpoint.getTimestamp() < lasttimestamp) {
 				System.out.println("submit records must be sorted by time with asc order");
@@ -49,7 +50,8 @@ public class LoadJobClient {
 						subpoint.getNumReduce(), 
 						subpoint.getTimestamp(),
 						subpoint.getInputSize(),
-						subpoint.getQueueName());
+						subpoint.getQueueName(),
+                        currentjobID++);
 				if (job == null){
 					throw new Exception("unrecognized job type");
 				}
@@ -60,6 +62,5 @@ public class LoadJobClient {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 }
