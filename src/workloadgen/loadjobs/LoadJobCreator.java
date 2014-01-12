@@ -11,11 +11,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileOutputFormat;
-import org.apache.hadoop.mapred.GenericMRLoadGenerator;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.SequenceFileOutputFormat;
+import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.mapred.lib.IdentityMapper;
 import org.apache.hadoop.mapred.lib.IdentityReducer;
 import org.apache.hadoop.mapred.lib.LongSumReducer;
@@ -134,7 +130,7 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 		
 		FileInputFormat.addInputPaths(websortJob, inputDir);
         FileOutputFormat.setOutputPath(websortJob, outDir);
-        
+
         websortJob.setCompressMapOutput(true);
         websortJob.setBoolean("mapred.output.compress", true);
         
@@ -213,7 +209,8 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 		
 		FileInputFormat.setInputPaths(grepJob, inputDir);
 		FileOutputFormat.setOutputPath(grepJob, outDir);
-		grepJob.setOutputFormat(SequenceFileOutputFormat.class);
+        grepJob.setInputFormat(TextInputFormat.class);
+        grepJob.setOutputFormat(SequenceFileOutputFormat.class);
 		grepJob.setOutputKeyClass(Text.class);
 		grepJob.setOutputValueClass(LongWritable.class);
 		clearDir(outDir.toString());
