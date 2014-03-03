@@ -58,6 +58,6 @@ ${HADOOP_HOME}/bin/hadoop jar \
   -D test.randomtextwrite.max_words_value=10000 \
   -D mapred.output.compress=true \
   -D mapred.map.output.compression.type=BLOCK \
-  -outFormat org.apache.hadoop.mapred.SequenceFileOutputFormat \
+  -outFormat org.apache.hadoop.mapred.TextOutputFormat \
   ${VARCOMPSEQ} &
 

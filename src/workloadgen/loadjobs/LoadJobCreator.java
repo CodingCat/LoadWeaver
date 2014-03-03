@@ -122,8 +122,8 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 		websortJob.setJarByClass(GenericMRLoadGenerator.class);
 		
 		websortJob.setNumReduceTasks(numReducers);
-		websortJob.setInputFormat(org.apache.hadoop.mapred.SequenceFileInputFormat.class);
-		websortJob.setOutputFormat(org.apache.hadoop.mapred.SequenceFileOutputFormat.class);
+		websortJob.setInputFormat(TextInputFormat.class);
+		websortJob.setOutputFormat(TextOutputFormat.class);
 
 		websortJob.setOutputKeyClass(org.apache.hadoop.io.Text.class);
 		websortJob.setOutputValueClass(org.apache.hadoop.io.Text.class);
@@ -210,7 +210,7 @@ public class LoadJobCreator extends GenericMRLoadGenerator{
 		FileInputFormat.setInputPaths(grepJob, inputDir);
 		FileOutputFormat.setOutputPath(grepJob, outDir);
         grepJob.setInputFormat(TextInputFormat.class);
-        grepJob.setOutputFormat(SequenceFileOutputFormat.class);
+        grepJob.setOutputFormat(TextOutputFormat.class);
 		grepJob.setOutputKeyClass(Text.class);
 		grepJob.setOutputValueClass(LongWritable.class);
 		clearDir(outDir.toString());
